@@ -1,0 +1,27 @@
+{
+  "version": "0.0.1",
+  "name": "gamerunner",
+  "description": "an engine to run turn based games with a http/json api",
+
+  "author": [ 
+    "Orestes Domínguez <orestes.dominguez@gmail.com>"
+  ],
+
+  "scripts": {
+    "start": "app.js"
+  },
+
+  "engines": {
+    "node": "0.8.x",
+    "npm": "1.2.14"
+  },
+
+
+  "dependencies": {
+    "express": "2.x.x",
+    "mocha": "1.10.x",
+    "chai": "1.1.x",
+    "sinon": "1.4.x"
+  }
+
+}
