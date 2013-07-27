@@ -1,9 +1,8 @@
 var chai = require('chai'),
-    expect = chai.expect,
-    sinon = require('sinon');
+    expect = chai.expect;
 
 var basedir = '../../';
-var handler = require(basedir + 'handler.js');
+var handler = require(basedir + 'handler')('./test/engines');
 
 
 describe("[Invoking handlers]", function() {
@@ -29,6 +28,15 @@ describe("[Invoking handlers]", function() {
         };
 
         handler.create(engine, req, res);
+    });
+
+    it("load engines", function(done) {
+        res.send = function(result) {
+            expect(result).to.deep.equal(['dummy']);
+            done();
+        };
+
+        handler.load_engines(req, res);
     });
 
     it("add_player", function(done) {

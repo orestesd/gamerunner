@@ -1,21 +1,36 @@
+module.exports = function(engines_path) {
+    var fs = require('fs')
+      , path = require('path');
 
-    var DummyEngine = require('./engines/dummy')
-      , gr = require('./gamerunner')
+    var gr = require('./gamerunner')
       , GameRunner = gr.GameRunner
       , Player = gr.Player;
 
-    var games = { 
-        'dummy' : {}
-    };
-    var engines = {
-        'dummy' : DummyEngine
-    }
+    var games = {}
+      , engines = {};
 
     function get_engine(engine_name) {
         return engines[engine_name];
     }
 
-    var handler = {
+    function load_fs_engines(folder) {
+        fs.readdirSync(folder)
+            .forEach( function(filename) {
+                var filepath = path.join(folder, filename);
+                var engine = path.basename(filename, path.extname(filename));
+
+                engines[engine] = require(folder + path.sep + engine);
+                games[engine] = {};
+            });
+    }
+    load_fs_engines(engines_path);
+
+    return {
+        load_engines : function(req, res) {
+            load_fs_engines(engines_path);
+            res.send(Object.keys(engines));
+        }, 
+
         create : function(engine_name, req, res) {
             var engine = get_engine(engine_name);
             var instance = new engine();
@@ -62,5 +77,4 @@
             res.send(result);
         }
     }
-
-module.exports = handler;
+}

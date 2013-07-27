@@ -4,7 +4,7 @@ var chai = require('chai'),
 
 var basedir = '../../';
 var gr = require(basedir + 'gamerunner.js');
-var DummyEngine = require(basedir + 'engines/dummy.js');
+var DummyEngine = require(basedir + 'test/engines/dummy.js');
 
 var sandbox;
 var runner;
