@@ -4,21 +4,12 @@ var chai = require('chai'),
 
 var basedir = '../../';
 var gr = require(basedir + 'gamerunner.js');
-var engine = require(basedir + 'engines/dummy.js');
+var DummyEngine = require(basedir + 'engines/dummy.js');
 
 var sandbox;
 var runner;
-var engine = {
-	command : function(player, data) { 
-		return {
-			is_valid : true, 
-			timestamp : 999,
-			data : 'gamestatus'
-		}; 
-	},
-	get_allowed_players : function() { return {min:2, max:4} },
-}
 
+var engine = new DummyEngine();
 
 beforeEach(function() {
 	sandbox = sinon.sandbox.create();
