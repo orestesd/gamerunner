@@ -77,6 +77,11 @@ var GameRunner = function(engine, options) {
 
 		if (! this.is_game_started() &&  enough_players) {
 			started = true;
+			
+			engine.init({
+				players : players
+			});
+			
 			return true;
 		}
 		return false;
