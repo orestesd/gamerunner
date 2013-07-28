@@ -21,7 +21,8 @@
     "express": "2.x.x",
     "mocha": "1.10.x",
     "chai": "1.1.x",
-    "sinon": "1.4.x"
+    "sinon": "1.4.x",
+	"supertest" : "0.6.x"
   }
 
 }

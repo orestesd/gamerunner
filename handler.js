@@ -14,67 +14,72 @@ module.exports = function(engines_path) {
     }
 
     function load_fs_engines(folder) {
-        fs.readdirSync(folder)
-            .forEach( function(filename) {
-                var filepath = path.join(folder, filename);
-                var engine = path.basename(filename, path.extname(filename));
+        if (fs.existsSync(folder)){
+            fs.readdirSync(folder)
+                .forEach( function(filename) {
+                    var filepath = path.join(folder, filename);
+                    var engine = path.basename(filename, path.extname(filename));
 
-                engines[engine] = require(folder + path.sep + engine);
-                games[engine] = {};
-            });
+                    engines[engine] = require(folder + path.sep + engine);
+                    games[engine] = {};
+                });
+        }
     }
     load_fs_engines(engines_path);
 
     return {
-        load_engines : function(req, res) {
+        load_engines : function() {
             load_fs_engines(engines_path);
-            res.send(Object.keys(engines));
+            return Object.keys(engines);
+        },
+
+        engine_info : function(engine_name) {
+            var engine = get_engine(engine_name);
+            return new engine().info;
         }, 
 
-        create : function(engine_name, req, res) {
+        create : function(engine_name) {
             var engine = get_engine(engine_name);
             var instance = new engine();
             var runner = new GameRunner(instance);
             games[engine_name][runner.get_id()] = runner;
             
-            res.send({ engine: engine_name, id: runner.get_id()});
+            return { engine: engine_name, id: runner.get_id()};
         },
 
-        add_player : function(engine_name, game_id, req, res) {
+        add_player : function(engine_name, game_id, data) {
             var runner = games[engine_name][game_id];
-            var data = req.body;
 
             var player = new Player(data.id, data.platform);
             var success = runner.add_player(player);
 
-            res.send(success);
+            return success;
         },
 
-        start : function(engine_name, game_id, req, res) {
+        start : function(engine_name, game_id) {
             var runner = games[engine_name][game_id];
             var success = runner.start_game();
-            res.send(success);
+            return success;
         },
 
-        end : function(engine_name, game_id, req, res) {
+        end : function(engine_name, game_id) {
             var runner = games[engine_name][game_id];
             var success = runner.end_game();
-            res.send(success);
+            return success;
         },
 
-        status : function(engine_name, game_id, req, res) {
+        status : function(engine_name, game_id) {
             var runner = games[engine_name][game_id];
             var status = runner.get_game_status();
 
-            res.send(status);
+            return status;
         },
 
-        command : function(engine_name, game_id, player_id, req, res) {
+        command : function(engine_name, game_id, player_id, command) {
             var runner = games[engine_name][game_id];
-            var data = req.body;
 
-            var result = runner.command(player_id, data);
-            res.send(result);
+            var result = runner.command(player_id, command);
+            return result;
         }
     }
 }

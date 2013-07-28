@@ -50,7 +50,7 @@ var GameRunner = function(engine, options) {
 
 	this.add_player  = function(player) {
 		var exists = this.get_player(player.get_id());
-		var game_is_full = players.length >= engine.get_allowed_players().max;
+		var game_is_full = players.length >= engine.info.allowed_players.max;
 
 		if (! exists && ! game_is_full && ! this.is_game_started()) {
 			players.push(player);
@@ -73,7 +73,7 @@ var GameRunner = function(engine, options) {
 	}
 
 	this.start_game = function() {
-		var enough_players = players.length >= engine.get_allowed_players().min;
+		var enough_players = players.length >= engine.info.allowed_players.min;
 
 		if (! this.is_game_started() &&  enough_players) {
 			started = true;
