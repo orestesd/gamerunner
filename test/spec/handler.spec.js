@@ -2,7 +2,8 @@ var chai = require('chai'),
     expect = chai.expect;
 
 var basedir = '../../';
-var handler = require(basedir + 'handler')('./test/engines');
+var config = require(basedir + 'test/config_test');
+var handler = require(basedir + 'handler')(config);
 
 
 describe("[Invoking handlers]", function() {

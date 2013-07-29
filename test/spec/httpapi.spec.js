@@ -3,9 +3,6 @@ var chai = require('chai'),
     request = require('supertest'),
     util = require('util');
 
-// test fixture
-process.env.ENGINES_PATH = './test/engines';
-
 var basedir = '../../';
 var app = require(basedir + 'app.js');
 

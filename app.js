@@ -6,10 +6,7 @@
 var express = require('express')
   , app = express.createServer();
 
-var conf = {
-    port : process.env.PORT || 8000,
-    engines_pah : process.env.ENGINES_PATH || './engines'
-}
+var config = require(process.env.CONF_FILE || './config');
 
 app.configure(function(){
   app.use(express.logger('dev'));
@@ -22,12 +19,14 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-var handler = require('./handler.js')(conf.engines_pah)
+
+// need define routes after bodyParser to allow req.body
+var handler = require('./handler.js')(config)
   , routes = require('./routes.js')(app, handler);
 
   
-app.listen(conf.port);
+app.listen(config.port);
 
-console.log("Express server listening on port " + conf.port);
+console.log("Express server listening on port " + config.port);
 
 module.exports = app;
