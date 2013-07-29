@@ -1,5 +1,6 @@
 module.exports = function(config) {
-    var engines_path = config.engines_path,
+    var Notifier = require('./notifiers'),
+        engines_path = config.engines_path,
         PlayerStore = require(config.player_store),
         GameStore = require(config.game_store);
 
@@ -71,6 +72,19 @@ module.exports = function(config) {
                 var success = runner.add_player(player);
                 return player.to_json();
             }
+        },
+
+        get_notif : function(player_id) {
+            var player = PlayerStore.read(player_id);
+            var notif = Notifier.get_notif(player);
+            return notif;
+        },
+
+        send_notif : function(player_id, data, player_id_from) {
+            var player = PlayerStore.read(player_id);
+            var from = PlayerStore.read(player_id_from);
+            var result = Notifier.send_notif(player, data, from);
+            return result;
         },
 
         start : function(game_id) {

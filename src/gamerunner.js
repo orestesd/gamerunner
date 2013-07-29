@@ -11,14 +11,6 @@ var GameRunner = function(eng, opts) {
 	var ended = false;
 	var last_command_timestamp = 0;
 
-	function notify_update(data, triggered_by) {
-		for (var i = 0; i < players.length; i++) {
-			if (players[i].id !== triggered_by) {
-				players[i].notify_update(data);
-			}
-		}
-	}
-
 	function players_json() {
 		var players_array = [];
 		for (var i = 0; i < players.length; i++) {
@@ -103,7 +95,6 @@ var GameRunner = function(eng, opts) {
 			var result = engine.command(player, data);
 
 			last_command_timestamp = new Date().getTime();
-			notify_update(result, player);
 
 			// decorate result
 			result.error = 0;
@@ -139,15 +130,11 @@ var Player = function(pdata) {
 		return platform;
 	};
 
-	this.notify_update = function(data) {
-
-	};
-
 	this.to_json = function() {
 		return {
 			id: id,
 			platform : platform
-		}
+		};
 	};
 };
 

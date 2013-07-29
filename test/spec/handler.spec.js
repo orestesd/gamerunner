@@ -116,3 +116,19 @@ describe("[GameRunner and Players handler]", function() {
     });
 
 });
+
+describe("[Player notifications]", function() {
+
+    beforeEach(function() {
+        handler.get_player_store().clear();        
+        handler.register_player('a', {platform: 'web'});
+        handler.register_player('b', {platform: 'web'});
+    });
+
+    it("send notifications from player to player", function() {
+        handler.send_notif('b', {idx: 1}, 'a');
+        handler.send_notif('b', {idx: 2}, 'a');
+        
+        expect(handler.get_notif('b')).to.have.length(2);
+    });
+});

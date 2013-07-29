@@ -12,6 +12,9 @@ var PlayerStore = function() {
         }, 
         clear : function(game) {
             players = {};
+        }, 
+        search : function(data) {
+            // TODO implement player search
         }
     };
 };

@@ -199,17 +199,6 @@ describe("[Sending commands and get status from GameRunner]", function() {
 		expect(engine.command.getCall(0).args[1]).to.be.equal('xxx');
 	});
 
-	it("a successful command is notified to players", function(done) {
-		player_b.notify_update = function(result) {
-			expect(result.data).to.be.equal('gamestatus');
-			done();
-		};
-
-		runner.start_game();
-		
-		runner.command('a', 'xxx');
-	});
-
 	it("GameRunner decorates the game status", function() {
 		runner.start_game();
 		
