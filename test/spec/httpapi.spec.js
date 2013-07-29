@@ -3,10 +3,21 @@ var chai = require('chai'),
     request = require('supertest'),
     util = require('util');
 
-var basedir = '../../';
+process.env.CONF_FILE = '../test/config_test';
+var basedir = '../../src/';
 var app = require(basedir + 'app.js');
 
 describe("[HTTP API]", function() {
+
+    it("GET / -> redirect to /games", function(done) {
+        request(app)
+            .get('/')
+            .expect(200)
+            .end(function(err, res) {
+                expect(res.header['location']).to.include('/games');
+                done();
+            });
+    });
 
     it("GET /games -> list game engines", function(done) {
         request(app)
@@ -79,6 +90,42 @@ describe("[HTTP API]", function() {
                                     .end(function(err, res) {
                                         expect(res.body).to.be.true;
                                         done();
+                                    }) 
+                            }) 
+
+                    })    
+            });
+            
+    });
+
+    it("GET /games/dummy/start -> start game", function(done) {
+        request(app)
+            .get('/games/dummy/create')
+            .end(function(err, res) {
+                var gameid = res.body.id;
+
+                // add player_a
+                request(app)
+                    .post(util.format('/games/dummy/%s/addplayer', gameid))
+                    .send( {id:'player_a', platform: 'web'} )
+                    .end(function(err, res) {
+                        
+                        // add player_b
+                        request(app)
+                            .post(util.format('/games/dummy/%s/addplayer', gameid))
+                            .send( {id:'player_b', platform: 'web'} )
+                            .end(function(err, res) {
+                                
+                                // start_game
+                                request(app)
+                                    .post(util.format('/games/dummy/%s/start', gameid))
+                                    .end(function(err, res) {
+                                        request(app)
+                                            .post(util.format('/games/dummy/%s/end', gameid))
+                                            .end(function(err, res) {
+                                                expect(res.body).to.be.true;
+                                                done();
+                                            })
                                     }) 
                             }) 
 

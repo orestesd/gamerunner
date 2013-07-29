@@ -2,27 +2,28 @@
   "version": "0.0.1",
   "name": "gamerunner",
   "description": "an engine to run turn based games with a http/json api",
-
-  "author": [ 
+  "author": [
     "Orestes Domínguez <orestes.dominguez@gmail.com>"
   ],
-
   "scripts": {
-    "start": "app.js"
+    "start": "node src/app.js",
+    "test": "grunt"
   },
-
   "engines": {
     "node": "0.8.x",
     "npm": "1.2.14"
   },
-
-
   "dependencies": {
-    "express": "2.x.x",
+    "express": "2.x.x"
+  },
+  "devDependencies": {
     "mocha": "1.10.x",
     "chai": "1.1.x",
     "sinon": "1.4.x",
-	"supertest" : "0.6.x"
+    "supertest": "0.6.x",
+    
+    "blanket": "1.1.x",
+    "grunt": "~0.4.1",
+    "grunt-mocha-test" : "0.6.x"
   }
-
 }

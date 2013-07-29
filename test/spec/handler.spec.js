@@ -1,8 +1,8 @@
 var chai = require('chai'),
     expect = chai.expect;
 
-var basedir = '../../';
-var config = require(basedir + 'test/config_test');
+var basedir = '../../src/';
+var config = require('../config_test');
 var handler = require(basedir + 'handler')(config);
 
 

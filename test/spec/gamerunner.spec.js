@@ -2,9 +2,9 @@ var chai = require('chai'),
 	expect = chai.expect,
 	sinon = require('sinon');
 
-var basedir = '../../';
+var basedir = '../../src/';
 var gr = require(basedir + 'gamerunner.js');
-var DummyEngine = require(basedir + 'test/engines/dummy.js');
+var DummyEngine = require('../engines_test/dummy.js');
 
 var sandbox;
 var runner;
