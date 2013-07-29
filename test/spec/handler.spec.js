@@ -29,4 +29,32 @@ describe("[Invoking handlers]", function() {
         expect(status.players).to.have.length(1);
     });
 
+    it("start", function() {
+        var game_id = handler.create(engine).id;
+        handler.add_player(engine, game_id, {id : 'a', platform: 'facebook'});
+        handler.add_player(engine, game_id, {id : 'b', platform: 'facebook'});
+        var result = handler.start(engine, game_id);
+        expect(result).to.be.true;
+    });
+
+    it("end", function() {
+        var game_id = handler.create(engine).id;
+        handler.add_player(engine, game_id, {id : 'a', platform: 'facebook'});
+        handler.add_player(engine, game_id, {id : 'b', platform: 'facebook'});
+        handler.start(engine, game_id);
+        var result = handler.end(engine, game_id);
+        expect(result).to.be.true;
+    });
+
+    it("command", function() {
+        var game_id = handler.create(engine).id;
+        handler.add_player(engine, game_id, {id : 'a', platform: 'facebook'});
+        handler.add_player(engine, game_id, {id : 'b', platform: 'facebook'});
+        handler.start(engine, game_id);
+        
+        var result = handler.command(engine, game_id, 'a', {'foo' : 'bar'});
+        expect(result.error).to.be.equal(0);
+        expect(result.timestamp).to.be.equal(999);
+    });
+
 });
