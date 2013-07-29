@@ -30,6 +30,20 @@ describe("[Creating a GameRunner]", function() {
 
 });
 
+describe("[Creating Players]", function() {
+	
+	it("Player.to_json() returns player's data as json", function() {
+		var player_a = new gr.Player({id:'a', platform: 'web'});
+
+		expect(player_a.get_id()).to.be.equal('a');
+		expect(player_a.to_json().id).to.be.equal('a');
+
+		expect(player_a.get_platform()).to.be.equal('web');
+		expect(player_a.to_json().platform).to.be.equal('web');
+	});
+
+});
+
 describe("[Adding players to a GameRunner]", function() {
 
 	var player_a, player_b, player_c, player_d, player_e;
@@ -48,6 +62,7 @@ describe("[Adding players to a GameRunner]", function() {
 
 		runner.add_player(player_b);
 		expect(runner.get_players()).to.have.length(2);
+		expect(runner.get_players_json()).to.have.length(2);
 	});
 
 	it("a player can't be added twice", function() {
@@ -56,6 +71,7 @@ describe("[Adding players to a GameRunner]", function() {
 
 		runner.add_player(player_a);
 		expect(runner.get_players()).to.have.length(1);
+		expect(runner.get_players_json()).to.have.length(1);
 	});
 
 	it("a player can't be added to a running game", function() {
@@ -149,7 +165,7 @@ describe("[Starting and ending a GameRunner]", function() {
 
 });
 
-describe("[Sending commands to GameRunner]", function() {
+describe("[Sending commands and get status from GameRunner]", function() {
 	
 	var player_a, player_b;
 
@@ -185,7 +201,6 @@ describe("[Sending commands to GameRunner]", function() {
 
 	it("a successful command is notified to players", function(done) {
 		player_b.notify_update = function(result) {
-			expect(result.timestamp).to.be.equal(999);
 			expect(result.data).to.be.equal('gamestatus');
 			done();
 		};
@@ -193,6 +208,14 @@ describe("[Sending commands to GameRunner]", function() {
 		runner.start_game();
 		
 		runner.command('a', 'xxx');
+	});
+
+	it("GameRunner decorates the game status", function() {
+		runner.start_game();
+		
+		var status = runner.get_game_status();
+		expect(status.players).to.have.length(2);
+		expect(status.running).to.be.true;
 	});
 
 });

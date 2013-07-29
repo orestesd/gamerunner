@@ -12,7 +12,6 @@ var Dummy = function() {
         command : function(player, data) { 
             return {
                 is_valid: true,
-                timestamp : 999,
                 data : 'gamestatus'
             }; 
         },

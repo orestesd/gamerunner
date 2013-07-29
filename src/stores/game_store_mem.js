@@ -9,6 +9,9 @@ var GameStore = function() {
         }, 
         save : function(game) {
             games[game.get_id()] = game;
+        }, 
+        clear : function(game) {
+            games = {};
         }
     };
 };

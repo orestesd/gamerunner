@@ -22,7 +22,7 @@ var GameRunner = function(eng, opts) {
 	function players_json() {
 		var players_array = [];
 		for (var i = 0; i < players.length; i++) {
-			players_array[i] = {id: players[i].get_id(), platform : players[i].get_platform()};
+			players_array[i] = players[i].to_json();
 		}
 		return players_array;
 	}
@@ -38,6 +38,10 @@ var GameRunner = function(eng, opts) {
 
 	this.get_players = function() {
 		return players;
+	};
+
+	this.get_players_json = function() {
+		return players_json();
 	};
 
 	this.get_player  = function(player_id) {
@@ -137,6 +141,13 @@ var Player = function(pdata) {
 
 	this.notify_update = function(data) {
 
+	};
+
+	this.to_json = function() {
+		return {
+			id: id,
+			platform : platform
+		}
 	};
 };
 
