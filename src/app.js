@@ -3,8 +3,8 @@
  * Module dependencies.
  */
 
-var express = require('express')
-  , app = express.createServer();
+var express = require('express'),
+    app = express.createServer();
 
 var config = require(process.env.CONF_FILE || './config');
 
@@ -21,8 +21,8 @@ app.configure('development', function(){
 
 
 // need define routes after bodyParser to allow req.body
-var handler = require('./handler.js')(config)
-  , routes = require('./routes.js')(app, handler);
+var handler = require('./handler.js')(config),
+    routes = require('./routes.js')(app, handler);
 
   
 app.listen(config.port);

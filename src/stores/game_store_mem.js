@@ -10,7 +10,7 @@ var GameStore = function() {
         save : function(game) {
             games[game.get_id()] = game;
         }
-    }
-}
+    };
+};
 
 module.exports = new GameStore();

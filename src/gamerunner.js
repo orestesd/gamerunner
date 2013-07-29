@@ -1,7 +1,7 @@
  
-var GameRunner = function(engine, options) {
-	var engine = engine;
-	var options = options;
+var GameRunner = function(eng, opts) {
+	var engine = eng;
+	var options = opts;
 	var id = new Date().getTime();
 
 	var players = [];
@@ -20,24 +20,25 @@ var GameRunner = function(engine, options) {
 	}
 
 	function players_json() {
-		var a = [];
+		var players_array = [];
 		for (var i = 0; i < players.length; i++) {
-			a[i] = {id: players[i].get_id(), platform : players[i].get_platform()}
+			players_array[i] = {id: players[i].get_id(), platform : players[i].get_platform()};
 		}
-		return a;
+		return players_array;
 	}
+
 
 	this.get_id = function() {
 		return id;
-	}
+	};
 
 	this.get_engine = function() {
 		return engine;
-	}
+	};
 
 	this.get_players = function() {
 		return players;
-	}
+	};
 
 	this.get_player  = function(player_id) {
 		for (var i = 0; i < players.length; i++) {
@@ -62,15 +63,15 @@ var GameRunner = function(engine, options) {
 
 	this.is_game_started = function() {
 		return started;
-	}
+	};
 
 	this.is_game_running = function() {
 		return started && !ended;
-	}
+	};
 
 	this.is_game_ended = function() {
 		return ended;
-	}
+	};
 
 	this.start_game = function() {
 		var enough_players = players.length >= engine.info.allowed_players.min;
@@ -120,11 +121,11 @@ var GameRunner = function(engine, options) {
 		return status;
 	};
 
-}
+};
 
-var Player = function(id, platform) {
-	var id = id;
-	var platform = platform;
+var Player = function(pdata) {
+	var id = pdata.id;
+	var platform = pdata.platform;
 
 	this.get_id = function() {
 		return id;
@@ -136,8 +137,8 @@ var Player = function(id, platform) {
 
 	this.notify_update = function(data) {
 
-	}
-}
+	};
+};
 
 // Export our public API.
 exports.GameRunner = GameRunner;

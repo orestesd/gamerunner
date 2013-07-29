@@ -35,11 +35,11 @@ describe("[Adding players to a GameRunner]", function() {
 	var player_a, player_b, player_c, player_d, player_e;
 
 	beforeEach(function() {
-		player_a = new gr.Player('a');
-		player_b = new gr.Player('b');
-		player_c = new gr.Player('c');
-		player_d = new gr.Player('d');
-		player_e = new gr.Player('e');
+		player_a = new gr.Player({id:'a'});
+		player_b = new gr.Player({id:'b'});
+		player_c = new gr.Player({id:'c'});
+		player_d = new gr.Player({id:'d'});
+		player_e = new gr.Player({id:'e'});
 	});
 
 	it("a player can be added to a not started game", function() {
@@ -105,8 +105,8 @@ describe("[Adding players to a GameRunner]", function() {
 describe("[Starting and ending a GameRunner]", function() {
 	
 	beforeEach(function() {
-		runner.add_player(new gr.Player('a'));
-		runner.add_player(new gr.Player('b'));
+		runner.add_player(new gr.Player({id:'a'}));
+		runner.add_player(new gr.Player({id:'b'}));
 	});
 
 	it("a GameRunner is created as not started", function() {
@@ -154,8 +154,8 @@ describe("[Sending commands to GameRunner]", function() {
 	var player_a, player_b;
 
 	beforeEach(function() {
-		player_a = new gr.Player('a');
-		player_b = new gr.Player('b');
+		player_a = new gr.Player({id:'a'});
+		player_b = new gr.Player({id:'b'});
 		runner.add_player(player_a);
 		runner.add_player(player_b);
 	});

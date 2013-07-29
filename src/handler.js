@@ -51,38 +51,38 @@ module.exports = function(config) {
         },
 
         add_player : function(engine_name, game_id, data) {
-            var runner = GameStore.read(game_id);;
+            var runner = GameStore.read(game_id);
 
-            var player = new Player(data.id, data.platform);
+            var player = new Player(data);
             var success = runner.add_player(player);
 
             return success;
         },
 
         start : function(engine_name, game_id) {
-            var runner = GameStore.read(game_id);;
+            var runner = GameStore.read(game_id);
             var success = runner.start_game();
             return success;
         },
 
         end : function(engine_name, game_id) {
-            var runner = GameStore.read(game_id);;
+            var runner = GameStore.read(game_id);
             var success = runner.end_game();
             return success;
         },
 
         status : function(engine_name, game_id) {
-            var runner = GameStore.read(game_id);;
+            var runner = GameStore.read(game_id);
             var status = runner.get_game_status();
 
             return status;
         },
 
         command : function(engine_name, game_id, player_id, command) {
-            var runner = GameStore.read(game_id);;
+            var runner = GameStore.read(game_id);
 
             var result = runner.command(player_id, command);
             return result;
         }
-    }
-}
+    };
+};

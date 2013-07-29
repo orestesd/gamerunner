@@ -60,7 +60,7 @@ describe("[HTTP API]", function() {
                     .end(function(err, res) {
                         expect(res.body).to.be.true;
                         done();
-                    })    
+                    });
             });
             
     });
@@ -90,7 +90,7 @@ describe("[HTTP API]", function() {
                                     .end(function(err, res) {
                                         expect(res.body).to.be.true;
                                         done();
-                                    }) 
+                                    });
                             }) 
 
                     })    
@@ -125,11 +125,11 @@ describe("[HTTP API]", function() {
                                             .end(function(err, res) {
                                                 expect(res.body).to.be.true;
                                                 done();
-                                            })
-                                    }) 
-                            }) 
+                                            });
+                                    }); 
+                            }); 
 
-                    })    
+                    });   
             });
             
     });
