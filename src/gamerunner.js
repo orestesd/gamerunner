@@ -11,18 +11,10 @@ var GameRunner = function(eng, opts) {
 	var ended = false;
 	var last_command_timestamp = 0;
 
-	function notify_update(data, triggered_by) {
-		for (var i = 0; i < players.length; i++) {
-			if (players[i].id !== triggered_by) {
-				players[i].notify_update(data);
-			}
-		}
-	}
-
 	function players_json() {
 		var players_array = [];
 		for (var i = 0; i < players.length; i++) {
-			players_array[i] = {id: players[i].get_id(), platform : players[i].get_platform()};
+			players_array[i] = players[i].to_json();
 		}
 		return players_array;
 	}
@@ -38,6 +30,10 @@ var GameRunner = function(eng, opts) {
 
 	this.get_players = function() {
 		return players;
+	};
+
+	this.get_players_json = function() {
+		return players_json();
 	};
 
 	this.get_player  = function(player_id) {
@@ -99,7 +95,6 @@ var GameRunner = function(eng, opts) {
 			var result = engine.command(player, data);
 
 			last_command_timestamp = new Date().getTime();
-			notify_update(result, player);
 
 			// decorate result
 			result.error = 0;
@@ -135,8 +130,11 @@ var Player = function(pdata) {
 		return platform;
 	};
 
-	this.notify_update = function(data) {
-
+	this.to_json = function() {
+		return {
+			id: id,
+			platform : platform
+		};
 	};
 };
 

@@ -7,8 +7,14 @@ var PlayerStore = function() {
         read : function(id) {
             return players[id];
         }, 
-        save : function(game) {
-            players[players.get_id()] = game;
+        save : function(player) {
+            players[player.get_id()] = player;
+        }, 
+        clear : function(game) {
+            players = {};
+        }, 
+        search : function(data) {
+            // TODO implement player search
         }
     };
 };
