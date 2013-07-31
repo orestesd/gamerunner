@@ -35,12 +35,12 @@ module.exports = function(app, handler) {
         res.json(result);
     });
 
-    app.all('/games/:gameid/start', function(req, res) {
+    app.post('/games/:gameid/start', function(req, res) {
         var result = handler.start(req.params.gameid);
         res.json(result);
     });
 
-    app.all('/games/:gameid/end', function(req, res) {
+    app.post('/games/:gameid/end', function(req, res) {
         var result = handler.end(req.params.gameid);
         res.json(result);
     });
