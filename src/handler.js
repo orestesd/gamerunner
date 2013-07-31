@@ -1,5 +1,6 @@
 module.exports = function(config) {
-    var Notifier = require('./notifiers'),
+    var emitter = new require('events').EventEmitter(),
+        Notifier = require('./notifiers'),
         engines_path = config.engines_path,
         PlayerStore = require(config.player_store),
         GameStore = require(config.game_store);
@@ -91,6 +92,8 @@ module.exports = function(config) {
             var runner = GameStore.read(game_id);
             if (runner) {
                 var success = runner.start_game();
+                // emit global event
+                process.emit('game-started', runner);
                 return success;
             }
         },
@@ -99,6 +102,8 @@ module.exports = function(config) {
             var runner = GameStore.read(game_id);
             if (runner) {
                 var success = runner.end_game();
+                // emit global event
+                process.emit('game-ended', runner);
                 return success;
             }
         },
