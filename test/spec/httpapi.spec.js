@@ -57,7 +57,7 @@ describe("[HTTP API]", function() {
 
     it("GET /games/dummy/create -> create game instance", function(done) {
         request(app)
-            .get('/games/dummy/create')
+            .post('/games/dummy/create')
             .expect(200)
             .end(function(err, res) {
                 expect(res.body.id).to.not.be.undefined;
@@ -67,7 +67,7 @@ describe("[HTTP API]", function() {
 
     it("GET /games/:gameid/addplayer/a -> add player to game instance", function(done) {
         request(app)
-            .get('/games/dummy/create')
+            .post('/games/dummy/create')
             .end(function(err, res) {
                 var gameid = res.body.id;
                 request(app)
@@ -82,7 +82,7 @@ describe("[HTTP API]", function() {
 
     it("GET /games/:gameid/start -> start game", function(done) {
         request(app)
-            .get('/games/dummy/create')
+            .post('/games/dummy/create')
             .end(function(err, res) {
                 var gameid = res.body.id;
 
@@ -113,7 +113,7 @@ describe("[HTTP API]", function() {
 
     it("GET /games/:gameid/start -> start game", function(done) {
         request(app)
-            .get('/games/dummy/create')
+            .post('/games/dummy/create')
             .end(function(err, res) {
                 var gameid = res.body.id;
 
