@@ -1,6 +1,5 @@
 module.exports = function(config) {
-    var emitter = new require('events').EventEmitter(),
-        Notifier = require('./notifiers'),
+    var Notifier = require('./notifiers'),
         engines_path = config.engines_path,
         PlayerStore = require(config.player_store),
         GameStore = require(config.game_store);
