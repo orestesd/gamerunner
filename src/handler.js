@@ -91,8 +91,6 @@ module.exports = function(config) {
             var runner = GameStore.read(game_id);
             if (runner) {
                 var success = runner.start_game();
-                // emit global event
-                process.emit('game-started', runner);
                 return success;
             }
         },
@@ -101,8 +99,6 @@ module.exports = function(config) {
             var runner = GameStore.read(game_id);
             if (runner) {
                 var success = runner.end_game();
-                // emit global event
-                process.emit('game-ended', runner);
                 return success;
             }
         },

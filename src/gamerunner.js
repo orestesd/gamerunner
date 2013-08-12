@@ -1,4 +1,13 @@
- 
+
+var EventEmitter = require('events').EventEmitter;
+
+EVENTS = {
+	start_game : 'game-started',
+	end_game : 'game-ended',
+	add_player : 'player-added',
+	command : 'command-received'
+}
+
 var GameRunner = function(eng, opts) {
 	var engine = eng;
 	var options = opts;
@@ -51,6 +60,8 @@ var GameRunner = function(eng, opts) {
 
 		if (! exists && ! game_is_full && ! this.is_game_started()) {
 			players.push(player);
+
+			this.emit(EVENTS.add_player, player);
 			return true;
 		}
 
@@ -79,6 +90,7 @@ var GameRunner = function(eng, opts) {
 				players : players
 			});
 			
+			this.emit(EVENTS.start_game);
 			return true;
 		}
 		return false;
@@ -86,6 +98,8 @@ var GameRunner = function(eng, opts) {
 
 	this.end_game  = function() {
 		ended = true;
+
+		this.emit(EVENTS.end_game);
 		return true;
 	};
 
@@ -99,6 +113,7 @@ var GameRunner = function(eng, opts) {
 			// decorate result
 			result.error = 0;
 
+			this.emit(EVENTS.command, result);
 			return result;
 		} else {
 			return {error : 1, is_valid : false, message: 'game is not running'};
@@ -138,6 +153,10 @@ var Player = function(pdata) {
 	};
 };
 
+// GameRunner inherits from EventEmitter
+GameRunner.prototype.__proto__ = EventEmitter.prototype;
+
 // Export our public API.
 exports.GameRunner = GameRunner;
 exports.Player = Player;
+exports.EVENTS = EVENTS;

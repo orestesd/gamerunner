@@ -81,25 +81,6 @@ describe("[GameRunner and Players handler]", function() {
             expect(result).to.be.true;
         });
 
-        it("start game emits global game-started event", function(done) {
-            process.once('game-started', function(game) {
-                expect(game.is_game_running()).to.be.true;
-                expect(game.get_players()).to.have.length(2);
-                done();
-            });
-            handler.start(game_id);
-        });
-
-        it("end game emits global game-started event", function(done) {
-            process.once('game-ended', function(game) {
-                expect(game.is_game_ended()).to.be.true;
-                expect(game.get_players()).to.have.length(2);
-                done();
-            });
-            handler.start(game_id);
-            handler.end(game_id);
-        });
-
         it("start unexistent game", function() {
             var result = handler.start('unexistent game id');
             expect(result).to.not.be.true;

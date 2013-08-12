@@ -176,7 +176,7 @@ describe("[Sending commands and get status from GameRunner]", function() {
 		runner.add_player(player_b);
 	});
 
-	it("an not started GameRunner doesn't accept commands", function() {
+	it("a not started GameRunner doesn't accept commands", function() {
 		var result = runner.command('a', {});
 		expect(result.error).to.be.equal(1);
 	});
@@ -207,4 +207,52 @@ describe("[Sending commands and get status from GameRunner]", function() {
 		expect(status.running).to.be.true;
 	});
 
+});
+
+describe("[GameRunner events]", function() {
+	
+	var player_a, player_b;
+
+	beforeEach(function() {
+		player_a = new gr.Player({id:'a'});
+		player_b = new gr.Player({id:'b'});
+	});
+
+	it("player-added event is raised", function(done) {
+		runner.once(gr.EVENTS.add_player, function(player) {
+			expect(player.get_id()).to.be.equal('a');
+			done();
+		});
+
+		runner.add_player(player_a);
+	});
+
+	it("game-started event is raised", function(done) {
+		runner.once(gr.EVENTS.start_game, function() {
+			done();
+		});
+
+		runner.add_player(new gr.Player({id:'a'}));
+		runner.add_player(new gr.Player({id:'b'}));
+		runner.start_game();
+	});
+
+	it("game-ended event is raised", function(done) {
+		runner.once(gr.EVENTS.end_game, function() {
+			done();
+		});
+
+		runner.end_game();
+	});
+
+	it("command-received event is raised", function(done) {
+		runner.once(gr.EVENTS.command, function() {
+			done();
+		});
+
+		runner.add_player(new gr.Player({id:'a'}));
+		runner.add_player(new gr.Player({id:'b'}));
+		runner.start_game();
+		runner.command('a', {});
+	});
 });
