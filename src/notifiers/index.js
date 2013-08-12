@@ -12,7 +12,7 @@ var AsyncNotifSender = (function() {
             notifiers[platform] = require('./' + platform);
         }
         return notifiers[platform];
-    };
+    }
 
     emitter.on(event_send, function(notif) {
         var platform = notif.to.get_platform();

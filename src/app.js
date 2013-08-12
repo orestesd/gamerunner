@@ -4,15 +4,15 @@ var express = require('express'),
 
 var config = require(process.env.CONF_FILE || './config');
 
-app.configure(function(){
-  app.enable("jsonp callback");  
+app.configure(function () {
+  app.enable("jsonp callback");
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
 });
 
-app.configure('development', function(){
+app.configure('development', function () {
   app.use(express.errorHandler());
 });
 
@@ -21,7 +21,7 @@ app.configure('development', function(){
 var handler = require('./handler.js')(config),
     routes = require('./routes.js')(app, handler);
 
-  
+
 app.listen(config.port);
 
 console.log("Express server listening on port " + config.port);
