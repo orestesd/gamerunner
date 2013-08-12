@@ -25,19 +25,19 @@ describe("[HTTP API]", function() {
             });
     });
 
-    it("GET / -> redirect to /games", function(done) {
+    it("GET / -> redirect to /engines", function(done) {
         request(app)
             .get('/')
             .expect(200)
             .end(function(err, res) {
-                expect(res.header['location']).to.include('/games');
+                expect(res.header['location']).to.include('/engines');
                 done();
             });
     });
 
-    it("GET /games -> list game engines", function(done) {
+    it("GET /engines -> list engines", function(done) {
         request(app)
-            .get('/games')
+            .get('/engines')
             .expect(200)
             .end(function(err, res) {
                 expect(res.body).to.deep.equal(['dummy']);
@@ -45,9 +45,9 @@ describe("[HTTP API]", function() {
             });
     });
 
-    it("GET /games/dummy -> list game engines", function(done) {
+    it("GET /engines/dummy -> engine info", function(done) {
         request(app)
-            .get('/games/dummy')
+            .get('/engines/dummy')
             .expect(200)
             .end(function(err, res) {
                 expect(res.body.name).to.be.equal('Dummy Game Engine');
@@ -55,9 +55,9 @@ describe("[HTTP API]", function() {
             });
     });
 
-    it("GET /games/dummy/create -> create game instance", function(done) {
+    it("GET /engines/dummy/create -> create engines instance (game)", function(done) {
         request(app)
-            .post('/games/dummy/create')
+            .post('/engines/dummy/create')
             .expect(200)
             .end(function(err, res) {
                 expect(res.body.id).to.not.be.undefined;
@@ -67,7 +67,7 @@ describe("[HTTP API]", function() {
 
     it("GET /games/:gameid/addplayer/a -> add player to game instance", function(done) {
         request(app)
-            .post('/games/dummy/create')
+            .post('/engines/dummy/create')
             .end(function(err, res) {
                 var gameid = res.body.id;
                 request(app)
@@ -82,7 +82,7 @@ describe("[HTTP API]", function() {
 
     it("GET /games/:gameid/start -> start game", function(done) {
         request(app)
-            .post('/games/dummy/create')
+            .post('/engines/dummy/create')
             .end(function(err, res) {
                 var gameid = res.body.id;
 
@@ -113,7 +113,7 @@ describe("[HTTP API]", function() {
 
     it("GET /games/:gameid/start -> start game", function(done) {
         request(app)
-            .post('/games/dummy/create')
+            .post('/engines/dummy/create')
             .end(function(err, res) {
                 var gameid = res.body.id;
 

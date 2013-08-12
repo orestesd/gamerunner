@@ -2,7 +2,8 @@ module.exports = function(config) {
     var Notifier = require('./notifiers'),
         engines_path = config.engines_path,
         PlayerStore = require(config.player_store),
-        GameStore = require(config.game_store);
+        GameStore = require(config.game_store),
+        GameListener = require('./game-event-listener');
 
     var fs = require('fs'),
         path = require('path');
@@ -47,6 +48,10 @@ module.exports = function(config) {
                 var instance = new engine();
                 var runner = new GameRunner(instance);
 
+                // add listeners
+                runner.listeners = runner.listeners || [];
+                runner.listener = new GameListener(runner);
+                
                 GameStore.save(runner);
                 
                 return { engine: engine_name, id: runner.get_id()};

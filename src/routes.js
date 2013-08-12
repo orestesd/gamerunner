@@ -11,24 +11,26 @@ module.exports = function(app, handler) {
     });
 
     app.get('/', function(req, res) {
-        res.redirect('/games');
+        res.redirect('/engines');
     });
 
-    app.get('/games', function(req, res) {
+
+    app.get('/engines', function(req, res) {
         var result = handler.load_engines();
         res.json(result);
     });
 
-    app.get('/games/:engine', function(req, res) {
+    app.get('/engines/:engine', function(req, res) {
         var result = handler.engine_info(req.params.engine);
         res.json(result);
     });
 
 
-    app.post('/games/:engine/create', function(req, res) {
+    app.post('/engines/:engine/create', function(req, res) {
         var result = handler.create(req.params.engine);
         res.json(result);
     });
+
 
     app.post('/games/:gameid/addplayer/:playerid', function(req, res) {
         var result = handler.add_player(req.params.gameid, req.params.playerid);
