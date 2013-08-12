@@ -1,14 +1,11 @@
 
-/**
- * Module dependencies.
- */
-
 var express = require('express'),
     app = express.createServer();
 
 var config = require(process.env.CONF_FILE || './config');
 
 app.configure(function(){
+  app.enable("jsonp callback");  
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
   app.use(express.methodOverride());
