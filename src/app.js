@@ -19,11 +19,19 @@ app.configure('development', function () {
 
 // need define routes after bodyParser to allow req.body
 var handler = require('./handler.js')(config),
-    routes = require('./routes.js')(app, handler);
-
+    routes = require('./routes.js')(app, handler),
+    gameListener = require('./listeners/game_listener.js');
 
 app.listen(config.port);
 
 console.log("Express server listening on port " + config.port);
+
+// apply configured game listeners
+var game_listeners = [];
+config.event_listeners.forEach(function(listener_path) {
+    var game_listener = require(listener_path);
+    game_listeners.push(game_listener);
+});
+
 
 module.exports = app;

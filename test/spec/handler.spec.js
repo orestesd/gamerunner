@@ -4,11 +4,10 @@ var chai = require('chai'),
 var basedir = '../../src/';
 var config = require('../config_test');
 var handler = require(basedir + 'handler')(config);
-
+var engine = 'dummy';
 
 describe("[GameRunner and Players handler]", function() {
-    var engine = 'dummy';
-
+    
     beforeEach(function() {
         handler.get_game_store().clear();
         handler.get_player_store().clear();        
@@ -117,18 +116,146 @@ describe("[GameRunner and Players handler]", function() {
 
 });
 
-describe("[Player notifications]", function() {
+describe("[Game events]", function() {
+    
+    var player_a, player_b;
 
     beforeEach(function() {
         handler.get_player_store().clear();        
+    });
+
+    it("player-registered event is raised", function(done) {
+        process.once(handler.EVENTS.register_player, function(player) {
+            expect(player.get_id()).to.be.equal('a');
+            done();
+        });
+
+        handler.register_player('a', {platform: 'web'});
+    });
+
+    it("game-created event is raised", function(done) {
+        process.once(handler.EVENTS.create_game, function(runner) {
+            expect(runner.get_id()).to.not.be.undefined;
+            done();
+        });
+
+        handler.create(engine);
+    });
+
+    it("player-added event is raised", function(done) {
+        process.once(handler.EVENTS.add_player, function(player) {
+            expect(player.get_id()).to.be.equal('a');
+            done();
+        });
+
+        handler.register_player('a', {platform: 'web'});
+        var game = handler.create(engine);
+        handler.add_player(game.id, 'a');
+    });
+
+    describe("", function() {
+
+        var gameid;
+
+        beforeEach(function() {
+            handler.register_player('a', {platform: 'web'});
+            handler.register_player('b', {platform: 'web'});
+
+            gameid = handler.create(engine).id;
+
+            handler.add_player(gameid, 'a');
+            handler.add_player(gameid, 'b');
+        });
+    
+        it("game-started event is raised", function(done) {
+            process.once(handler.EVENTS.start_game, function(runner) {
+                expect(runner.get_id()).to.be.equal(gameid);
+                done();
+            });
+
+            handler.start(gameid);
+        });
+
+        it("game-ended event is raised", function(done) {
+            process.once(handler.EVENTS.end_game, function(runner) {
+                expect(runner.get_id()).to.be.equal(gameid);
+                done();
+            });
+
+            handler.end(gameid);
+        });
+
+        it("command-received event is raised", function(done) {
+            process.once(handler.EVENTS.command, function(command_result) {
+                expect(command_result.error).to.be.equal(0);
+                done();
+            });
+
+            handler.start(gameid);
+            handler.command(gameid, 'a', {});
+        });
+
+    });
+
+});
+
+describe("[Player notifications]", function() {
+
+    var player_a, player_b;
+
+    beforeEach(function() {
+        handler.get_player_store().clear();
         handler.register_player('a', {platform: 'web'});
         handler.register_player('b', {platform: 'web'});
+    });
+
+    it("sending notifications", function() {
+        var result = handler.send_notif('a', {idx: 0});
+        expect(result).to.be.true;
     });
 
     it("send notifications from player to player", function() {
         handler.send_notif('b', {idx: 1}, 'a');
         handler.send_notif('b', {idx: 2}, 'a');
         
-        expect(handler.get_notif('b')).to.have.length(2);
+        expect(handler.read_notif('b')).to.have.length(2);
     });
+
+    it("reading notifications", function() {
+        handler.send_notif('a', {idx: 1});
+        handler.send_notif('a', {idx: 2});
+        
+        var notifs = handler.read_notif('a');
+        expect(notifs).to.have.length(2);
+        expect(notifs[0].idx).to.be.equal(1);
+        expect(notifs[1].idx).to.be.equal(2);
+    });
+
+    it("notifications are removed after reading", function() {
+        handler.send_notif('a', {idx: 1});
+        expect(handler.read_notif('a')).to.have.length(1);
+        expect(handler.read_notif('a')).to.have.length(0);
+    });
+
+    it("notification-sent event is raised", function(done) {
+        process.once(handler.EVENTS.send_notif, function(player, data, from) {
+            expect(player.get_id()).to.be.equal('a');
+            expect(data).to.be.deep.equal({idx: 1});
+            done();
+        });
+
+        handler.send_notif('a', {idx: 1});
+    });
+
+    it("notification-read event is raised", function(done) {
+        process.once(handler.EVENTS.read_notif, function(player, notifications) {
+            expect(player.get_id()).to.be.equal('a');
+            expect(notifications).to.be.deep.equal([{idx: 1}]);
+            done();
+        });
+
+        handler.send_notif('a', {idx: 1});
+        handler.read_notif('a');
+    });
+
 });

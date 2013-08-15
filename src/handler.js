@@ -1,9 +1,8 @@
-module.exports = function(config) {
-    var Notifier = require('./notifiers'),
-        engines_path = config.engines_path,
+
+var GameHandler = function(config) {
+    var engines_path = config.engines_path,
         PlayerStore = require(config.player_store),
-        GameStore = require(config.game_store),
-        GameListener = require('./game-event-listener');
+        GameStore = require(config.game_store);
 
     var fs = require('fs'),
         path = require('path');
@@ -48,12 +47,10 @@ module.exports = function(config) {
                 var instance = new engine();
                 var runner = new GameRunner(instance);
 
-                // add listeners
-                runner.listeners = runner.listeners || [];
-                runner.listener = new GameListener(runner);
-                
                 GameStore.save(runner);
                 
+                process.emit(EVENTS.create_game, runner);
+
                 return { engine: engine_name, id: runner.get_id()};
             }
         },
@@ -62,6 +59,9 @@ module.exports = function(config) {
             data.id = player_id;
             var player = new Player(data);
             PlayerStore.save(player);
+
+            process.emit(EVENTS.register_player, player);
+
             return player.to_json();
         },
 
@@ -72,23 +72,26 @@ module.exports = function(config) {
         add_player : function(game_id, player_id) {
             var runner = GameStore.read(game_id);
             var player = PlayerStore.read(player_id);
-            
+
             if (runner && player) {
                 var success = runner.add_player(player);
+                process.emit(EVENTS.add_player, player);
                 return player.to_json();
             }
         },
 
-        get_notif : function(player_id) {
+        read_notif : function(player_id) {
             var player = PlayerStore.read(player_id);
-            var notif = Notifier.get_notif(player);
-            return notif;
+            var notifications = PlayerStore.read_notif(player_id);
+            process.emit(EVENTS.read_notif, player, notifications);
+            return notifications;
         },
 
         send_notif : function(player_id, data, player_id_from) {
             var player = PlayerStore.read(player_id);
             var from = PlayerStore.read(player_id_from);
-            var result = Notifier.send_notif(player, data, from);
+            var result = PlayerStore.save_notif(player_id, data, player_id_from);
+            process.emit(EVENTS.send_notif, player, data, from);
             return result;
         },
 
@@ -96,6 +99,7 @@ module.exports = function(config) {
             var runner = GameStore.read(game_id);
             if (runner) {
                 var success = runner.start_game();
+                process.emit(EVENTS.start_game, runner);
                 return success;
             }
         },
@@ -104,6 +108,7 @@ module.exports = function(config) {
             var runner = GameStore.read(game_id);
             if (runner) {
                 var success = runner.end_game();
+                process.emit(EVENTS.end_game, runner);
                 return success;
             }
         },
@@ -119,15 +124,37 @@ module.exports = function(config) {
             var runner = GameStore.read(game_id);
 
             var result = runner.command(player_id, command);
+            process.emit(EVENTS.command, result);
             return result;
         },
 
         get_player_store : function() {
-            return GameStore;
+            return PlayerStore;
         },
 
         get_game_store : function() {
-            return PlayerStore;
+            return GameStore;
         }
     };
+};
+
+var EVENTS = {
+    create_game : 'game-created',
+    start_game : 'game-started',
+    end_game : 'game-ended',
+    add_player : 'player-added',
+    command : 'command-received',
+
+    register_player : 'player-registered',
+    send_notif : 'notification-sent',
+    read_notif : 'notif-read',
+    
+}
+
+module.exports = function(config) {
+    var handler = new GameHandler(config);
+
+    handler.EVENTS = EVENTS;
+
+    return handler;
 };

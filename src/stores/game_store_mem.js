@@ -5,7 +5,9 @@ var GameStore = function() {
 
     return {
         read : function(id) {
-            return games[id];
+            var game = games[id];
+            process.emit('engine-instance-restored', game);
+            return game;
         }, 
         save : function(game) {
             games[game.get_id()] = game;
