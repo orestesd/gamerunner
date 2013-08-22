@@ -7,143 +7,171 @@ process.env.CONF_FILE = '../test/config_test';
 var basedir = '../../src/';
 var app = require(basedir + 'app.js');
 
+var config = require('../config_test');
+var handler = require(basedir + 'handler')(config);
+
+var engine = 'dummy';
+
 describe("[HTTP API]", function() {
 
-    beforeEach(function(done) {
-        request(app)
-            .post('/players/a')
-            .send({platform : 'web'})
-            .expect(200)
-            .end(function(err, res) {
-                request(app)
-                    .post('/players/b')
-                    .send({platform : 'web'})
-                    .expect(200)
-                    .end(function(err, res) {
-                        done();
-                    })
-            });
+    describe("engines", function() {
+        
+        it("GET / -> redirect to /engines", function(done) {
+            request(app)
+                .get('/')
+                .expect(200)
+                .end(function(err, res) {
+                    expect(res.header['location']).to.include('/engines');
+                    done();
+                });
+        });
+
+        it("GET /engines -> list engines", function(done) {
+            request(app)
+                .get('/engines')
+                .expect(200)
+                .end(function(err, res) {
+                    expect(res.body).to.deep.equal(['dummy']);
+                    done();
+                });
+        });
+
+        it("GET /engines/:engine -> engine info", function(done) {
+            request(app)
+                .get(util.format('/engines/%s', engine))
+                .expect(200)
+                .end(function(err, res) {
+                    expect(res.body.name).to.be.equal('Dummy Game Engine');
+                    done();
+                });
+        });
+
+        it("POST /engines/:engine/create -> create engines instance (game)", function(done) {
+            handler.register_player('a', {platform: 'facebook'});
+
+            request(app)
+                .post(util.format('/engines/%s/create', engine))
+                .set('authorization', auth_header('a'))
+                .expect(200)
+                .end(function(err, res) {
+                    expect(res.body.id).to.not.be.undefined;
+                    done();
+                });
+        });
+    });
+    
+
+    describe("players", function() {
+
+        it("POST /players/register -> register player", function(done) {
+            request(app)
+                .post('/players/register')
+                .send({id: 'a', platform : 'web'})
+                .expect(200)
+                .end(function(err, res) {
+                    expect(res.body.id).to.be.equal('a');
+                    expect(res.body.platform).to.be.equal('web');
+                    done();
+                });
+        });
+
+        it("GET /players/a -> get player info", function(done) {
+            request(app)
+                .get('/players/a')
+                .expect(200)
+                .end(function(err, res) {
+                    expect(res.body.id).to.be.equal('a');
+                    expect(res.body.platform).to.be.equal('web');
+                    done();
+                });
+        });
+
     });
 
-    it("GET / -> redirect to /engines", function(done) {
-        request(app)
-            .get('/')
-            .expect(200)
-            .end(function(err, res) {
-                expect(res.header['location']).to.include('/engines');
-                done();
-            });
-    });
+    describe("games", function() {
+        
+        var game_id;
 
-    it("GET /engines -> list engines", function(done) {
-        request(app)
-            .get('/engines')
-            .expect(200)
-            .end(function(err, res) {
-                expect(res.body).to.deep.equal(['dummy']);
-                done();
-            });
-    });
+        beforeEach(function() {
+            handler.get_game_store().clear();
+            handler.get_player_store().clear();
 
-    it("GET /engines/dummy -> engine info", function(done) {
-        request(app)
-            .get('/engines/dummy')
-            .expect(200)
-            .end(function(err, res) {
-                expect(res.body.name).to.be.equal('Dummy Game Engine');
-                done();
-            });
-    });
+            handler.register_player('a', {platform: 'facebook'});
+            handler.register_player('b', {platform: 'facebook'});
+            handler.register_player('c', {platform: 'facebook'});
 
-    it("GET /engines/dummy/create -> create engines instance (game)", function(done) {
-        request(app)
-            .post('/engines/dummy/create')
-            .expect(200)
-            .end(function(err, res) {
-                expect(res.body.id).to.not.be.undefined;
-                done();
-            });
-    });
+            game_id = handler.create(engine).id;
+            handler.add_player(game_id, 'a');
+            handler.add_player(game_id, 'b');
+        });
+    
+        it("POST /games/:game_id/addplayer/c -> add player to game instance", function(done) {
+            request(app)
+                .post(util.format('/games/%s/addplayer/c', game_id))
+                .set('authorization', auth_header('a'))
+                .end(function(err, res) {
+                    expect(res.body.id).to.be.equal('c');
+                    done();
+                });
+                
+        });
 
-    it("GET /games/:gameid/addplayer/a -> add player to game instance", function(done) {
-        request(app)
-            .post('/engines/dummy/create')
-            .end(function(err, res) {
-                var gameid = res.body.id;
-                request(app)
-                    .post(util.format('/games/%s/addplayer/a', gameid))
-                    .end(function(err, res) {
-                        expect(res.body.id).to.be.equal('a');
-                        done();
-                    });
-            });
+        it("POST /games/:game_id/start -> start game", function(done) {
             
-    });
+            request(app)
+                .post(util.format('/games/%s/start', game_id))
+                .set('authorization', auth_header('a'))
+                .end(function(err, res) {
+                    expect(res.body).to.be.true;
+                    done();
+                });
+                
+        });
 
-    it("GET /games/:gameid/start -> start game", function(done) {
-        request(app)
-            .post('/engines/dummy/create')
-            .end(function(err, res) {
-                var gameid = res.body.id;
+        it("POST /games/:game_id/end -> end game", function(done) {
+            request(app)
+                .post(util.format('/games/%s/end', game_id))
+                .set('authorization', auth_header('a'))
+                .end(function(err, res) {
+                    expect(res.body).to.be.true;
+                    done();
+                });
+                
+        });
 
-                // add player a
-                request(app)
-                    .post(util.format('/games/%s/addplayer/a', gameid))
-                    .end(function(err, res) {
-                        
-                        // add player_b
-                        request(app)
-                            .post(util.format('/games/%s/addplayer/b', gameid))
-                            .end(function(err, res) {
-                                
-                                // start_game
-                                request(app)
-                                    .post(util.format('/games/%s/start', gameid))
-                                    .send( {id:'player_b', platform: 'web'} )
-                                    .end(function(err, res) {
-                                        expect(res.body).to.be.true;
-                                        done();
-                                    });
-                            }) 
+        it("POST /games/:game_id/command -> send command to game", function(done) {
+            handler.start(game_id);
 
-                    })    
-            });
-            
-    });
+            request(app)
+                .post(util.format('/games/%s/command', game_id))
+                .send({playerid:'a', foo:'bar'})
+                .set('authorization', auth_header('a'))
+                .end(function(err, res) {
+                    expect(res.body.is_valid).to.be.true;
+                    expect(res.body.error).to.be.equal(0);
+                    done();
+                });
+                
+        });
 
-    it("GET /games/:gameid/start -> start game", function(done) {
-        request(app)
-            .post('/engines/dummy/create')
-            .end(function(err, res) {
-                var gameid = res.body.id;
-
-                // add player_a
-                request(app)
-                    .post(util.format('/games/%s/addplayer/a', gameid))
-                    .end(function(err, res) {
-                        
-                        // add player_b
-                        request(app)
-                            .post(util.format('/games/%s/addplayer/b', gameid))
-                            .send( {id:'player_b', platform: 'web'} )
-                            .end(function(err, res) {
-                                
-                                // start_game
-                                request(app)
-                                    .post(util.format('/games/%s/start', gameid))
-                                    .end(function(err, res) {
-                                        request(app)
-                                            .post(util.format('/games/%s/end', gameid))
-                                            .end(function(err, res) {
-                                                expect(res.body).to.be.true;
-                                                done();
-                                            });
-                                    }); 
-                            }); 
-
-                    });   
-            });
-            
+        it("GET /games/:game_id/status -> get game status", function(done) {
+            request(app)
+                .get(util.format('/games/%s/status', game_id))
+                .set('authorization', auth_header('a'))
+                .end(function(err, res) {
+                    expect(res.body.players).to.have.length(2);
+                    expect(res.body.running).to.be.false;
+                    expect(res.body.timestamp).to.be.equal(0);
+                    done();
+                });
+                
+        });
     });
 
 });
+
+function auth_header(username, password) {
+    var encoded = new Buffer(username + ':' + (password || '')).toString('base64');
+    return 'Basic ' + encoded;
+    
+}

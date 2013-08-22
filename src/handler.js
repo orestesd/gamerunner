@@ -124,6 +124,7 @@ var GameHandler = function(config) {
             var runner = GameStore.read(game_id);
 
             var result = runner.command(player_id, command);
+            
             process.emit(EVENTS.command, result);
             return result;
         },
