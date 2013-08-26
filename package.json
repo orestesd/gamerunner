@@ -8,7 +8,7 @@
   "scripts": {
     "start": "grunt nodemon",
     "test": "grunt test",
-    "test-debug": "mocha --debug-brk test/spec/"
+    "test-debug": "mocha --debug-brk --timeout 3000000 test/spec/"
   },
   "engines": {
     "node": "0.8.x",

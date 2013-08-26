@@ -27,7 +27,7 @@ module.exports = function(app, handler) {
         var found = false
         if (game) {
             game.get_players().forEach(function(player) {
-                if (player.get_id() == req.username) {
+                if (player.id === req.username) {
                     found = true;
                 }
             });    
