@@ -6,8 +6,9 @@
     "Orestes Domínguez <orestes.dominguez@gmail.com>"
   ],
   "scripts": {
-    "start": "node src/app.js",
-    "test": "grunt"
+    "start": "grunt nodemon",
+    "test": "grunt test",
+    "test-debug": "mocha --debug-brk test/spec/"
   },
   "engines": {
     "node": "0.8.x",
@@ -24,6 +25,7 @@
     "blanket": "1.1.x",
     "grunt": "~0.4.1",
     "grunt-mocha-test": "0.6.x",
-    "grunt-contrib-jshint": "~0.6.1"
+    "grunt-contrib-jshint": "~0.6.1",
+    "grunt-nodemon": "0.1.0"
   }
 }

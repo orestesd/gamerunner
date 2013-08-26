@@ -2,7 +2,8 @@ module.exports = function(grunt) {
 
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-
+  grunt.loadNpmTasks('grunt-nodemon');
+  
   grunt.initConfig({
 
     mochaTest: {
@@ -25,13 +26,24 @@ module.exports = function(grunt) {
         src: ['test/**/*.js']
       }
     },
-
+    
     jshint: {
       src: ['Gruntfile.js', 'src/**/*.js']
+    },
+    
+    nodemon: {
+      dev: {
+        options: {
+          file: 'src/app.js',
+          nodeArgs: ['--debug'],
+          watchedFolders: ['src'],
+          delayTime: 1
+        }
+      }
     }
     
   });
 
-  grunt.registerTask('default', 'mochaTest');
-
+  grunt.registerTask('default', 'nodemon');
+  grunt.registerTask('test', 'mochaTest');
 };
