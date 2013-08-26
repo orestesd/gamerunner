@@ -138,12 +138,18 @@ var Player = function(pdata) {
 		return platform;
 	};
 
-	this.to_json = function() {
-		return {
-			id: id,
-			platform : platform
-		};
+};
+
+Player.prototype.to_json = function() {
+	return {
+		id: this.get_id(),
+		platform : this.get_platform()
 	};
+};
+
+Player.from_json = function(data) {
+	var player = new Player(data);
+	return player;
 };
 
 // Export our public API.

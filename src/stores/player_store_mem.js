@@ -1,3 +1,4 @@
+var Player = require('../gamerunner').Player;
 
 var Notification = function(player_id_to, payload, player_id_from) {
     var to = player_id_to;
@@ -28,11 +29,14 @@ var PlayerStore = function() {
 
     return {
         read : function(id) {
-            return players[id];
+            var data = players[id];
+            if (data) {
+                return Player.from_json(data);    
+            }
         },
 
         save : function(player) {
-            players[player.get_id()] = player;
+            players[player.get_id()] = player.to_json();
         },
 
         clear : function() {
