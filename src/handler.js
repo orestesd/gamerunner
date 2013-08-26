@@ -75,6 +75,7 @@ var GameHandler = function(config) {
 
             if (runner && player) {
                 var success = runner.add_player(player);
+                GameStore.save(runner);
                 process.emit(EVENTS.add_player, player);
                 return player.to_json();
             }
@@ -99,6 +100,7 @@ var GameHandler = function(config) {
             var runner = GameStore.read(game_id);
             if (runner) {
                 var success = runner.start_game();
+                GameStore.save(runner);
                 process.emit(EVENTS.start_game, runner);
                 return success;
             }
@@ -108,6 +110,7 @@ var GameHandler = function(config) {
             var runner = GameStore.read(game_id);
             if (runner) {
                 var success = runner.end_game();
+                GameStore.save(runner);
                 process.emit(EVENTS.end_game, runner);
                 return success;
             }
@@ -125,6 +128,7 @@ var GameHandler = function(config) {
 
             var result = runner.command(player_id, command);
             
+            GameStore.save(runner);
             process.emit(EVENTS.command, result);
             return result;
         },

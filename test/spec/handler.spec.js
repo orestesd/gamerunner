@@ -97,7 +97,6 @@ describe("[GameRunner and Players handler]", function() {
 
         it("command", function() {
             handler.start(game_id);
-            
             var result = handler.command(game_id, 'a', {'foo' : 'bar'});
             expect(result.error).to.be.equal(0);
             expect(result.data).to.be.equal('gamestatus');

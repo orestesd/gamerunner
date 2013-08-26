@@ -1,24 +1,15 @@
 
 var GameRunner = function(eng, opts) {
+	var options = opts || {};
+
 	var engine = eng;
-	var options = opts;
-	var id = new Date().getTime();
+	var id = options.id || new Date().getTime();
 
-	var players = [];
-	var status = {};
+	var players = options.players || [];
 	
-	var started = false;
-	var ended = false;
-	var last_command_timestamp = 0;
-
-	function players_json() {
-		var players_array = [];
-		for (var i = 0; i < players.length; i++) {
-			players_array[i] = players[i].to_json();
-		}
-		return players_array;
-	}
-
+	var started = options.started || false;
+	var ended = options.ended || false;
+	var last_command_timestamp = options.tmstmp || 0;
 
 	this.get_id = function() {
 		return id;
@@ -32,13 +23,9 @@ var GameRunner = function(eng, opts) {
 		return players;
 	};
 
-	this.get_players_json = function() {
-		return players_json();
-	};
-
 	this.get_player  = function(player_id) {
 		for (var i = 0; i < players.length; i++) {
-			if (players[i].get_id() === player_id) {
+			if (players[i].id === player_id) {
 				return players[i];
 			}
 		}
@@ -50,7 +37,7 @@ var GameRunner = function(eng, opts) {
 		var game_is_full = players.length >= engine.info.allowed_players.max;
 
 		if (! exists && ! game_is_full && ! this.is_game_started()) {
-			players.push(player);
+			players.push(player.to_json());
 			return true;
 		}
 
@@ -110,13 +97,33 @@ var GameRunner = function(eng, opts) {
 		var status = engine.get_status();
 
 		// decorate status
-		status.players = players_json();
+		status.players = this.get_players();
 		status.timestamp = last_command_timestamp;
 		status.running = this.is_game_running();
 
 		return status;
 	};
 
+	this.get_timestamp = function() {
+		return last_command_timestamp;
+	};
+
+};
+
+GameRunner.prototype.to_json = function() {
+	return {
+        id : this.get_id(),
+        engine : this.get_engine(),
+        players : this.get_players(),
+        started : this.is_game_started(),
+        ended : this.is_game_ended(),
+        tmstmp : this.get_timestamp()
+    }
+};
+
+GameRunner.from_json = function(data) {
+	var runner = new GameRunner(data.engine, data);
+	return runner;
 };
 
 var Player = function(pdata) {

@@ -62,7 +62,6 @@ describe("[Adding players to a GameRunner]", function() {
 
 		runner.add_player(player_b);
 		expect(runner.get_players()).to.have.length(2);
-		expect(runner.get_players_json()).to.have.length(2);
 	});
 
 	it("a player can't be added twice", function() {
@@ -71,7 +70,6 @@ describe("[Adding players to a GameRunner]", function() {
 
 		runner.add_player(player_a);
 		expect(runner.get_players()).to.have.length(1);
-		expect(runner.get_players_json()).to.have.length(1);
 	});
 
 	it("a player can't be added to a running game", function() {
@@ -195,7 +193,7 @@ describe("[Sending commands and get status from GameRunner]", function() {
 		
 		var result = runner.command('a', 'xxx');
 		expect(engine.command.calledOnce).to.be.ok;
-		expect(engine.command.getCall(0).args[0].get_id()).to.be.equal('a');
+		expect(engine.command.getCall(0).args[0].id).to.be.equal('a');
 		expect(engine.command.getCall(0).args[1]).to.be.equal('xxx');
 	});
 

@@ -1,3 +1,4 @@
+var GameRunner = require('../gamerunner').GameRunner;
 
 var GameStore = function() {
 
@@ -5,12 +6,15 @@ var GameStore = function() {
 
     return {
         read : function(id) {
-            var game = games[id];
-            process.emit('engine-instance-restored', game);
-            return game;
+            var data = games[id];
+            if (data) {
+                var game = GameRunner.from_json(data);
+                process.emit('engine-instance-restored', game);
+                return game;
+            }
         }, 
         save : function(game) {
-            games[game.get_id()] = game;
+            games[game.get_id()] = game.to_json();
         }, 
         clear : function(game) {
             games = {};
