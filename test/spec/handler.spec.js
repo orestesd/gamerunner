@@ -45,13 +45,13 @@ describe("[GameRunner and Players handler]", function() {
         var game_id = handler.create(engine).id;
         handler.register_player('a', {platform: 'facebook'});
 
-        var result = handler.add_player(game_id, 'a', {platform: 'facebook'});
+        var result = handler.add_player(game_id, 'a');
         expect(result.id).to.be.equal('a');
     });
 
     it("add unregistered player", function() {
         var game_id = handler.create(engine).id;
-        var result = handler.add_player(game_id, 'a', {platform: 'facebook'});
+        var result = handler.add_player(game_id, 'a');
         expect(result).to.be.undefined;
     });
 

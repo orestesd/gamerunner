@@ -28,7 +28,7 @@ console.log("Express server listening on port " + config.port);
 // apply configured game listeners
 var game_listeners = [];
 config.event_listeners.forEach(function(listener_path) {
-    var game_listener = require(listener_path);
+    var game_listener = require(listener_path)(handler);
     game_listeners.push(game_listener);
 });
 

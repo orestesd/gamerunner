@@ -3,6 +3,12 @@ module.exports = function(app, handler) {
     var util = require('util'),
         express = require('express');
 
+    function render_json_response(req, res) {
+        return function(err, result) {
+            res.json(result);
+        }
+    }
+
     function extract_auth_header_data(req) {
         var header = (req.headers['authorization'] || ' : ').split(' ');
         var decoded = new Buffer(header[1], 'base64').toString();
@@ -52,58 +58,48 @@ module.exports = function(app, handler) {
 
 
     app.get('/engines', function(req, res) {
-        var result = handler.load_engines();
-        res.json(result);
+        handler.load_engines(render_json_response(req, res))
     });
 
     app.get('/engines/:engine', function(req, res) {
-        var result = handler.engine_info(req.params.engine);
-        res.json(result);
+        handler.engine_info(req.params.engine, render_json_response(req, res))
     });
 
 
     app.post('/engines/:engine/create', auth_user, function(req, res) {
-        var result = handler.create(req.params.engine);
-        res.json(result);
+        handler.create(req.params.engine, render_json_response(req, res));
     });
 
 
     app.post('/games/:gameid/addplayer/:playerid', auth_user, function(req, res) {
-        var result = handler.add_player(req.params.gameid, req.params.playerid);
-        res.json(result);
+        handler.add_player(req.params.gameid, req.params.playerid, render_json_response(req, res));
     });
 
     app.post('/games/:gameid/start', auth_user, auth_game, function(req, res) {
-        var result = handler.start(req.params.gameid);
-        res.json(result);
+        handler.start(req.params.gameid, render_json_response(req, res));
     });
 
     app.post('/games/:gameid/end', auth_user, auth_game, function(req, res) {
-        var result = handler.end(req.params.gameid);
-        res.json(result);
+        handler.end(req.params.gameid, render_json_response(req, res));
     });
 
     // FIXME with get don't manage auth properly cause cors preflight headers
     app.all('/games/:gameid/status', auth_user, auth_game, function(req, res) {
-        var result = handler.status(req.params.gameid);
-        res.json(result);
+        handler.status(req.params.gameid, render_json_response(req, res));
     });
 
     app.post('/games/:gameid/command', auth_user, auth_game, function(req, res) {
         var playerid = req.username;
-        var result = handler.command(req.params.gameid, playerid, req.body);
-        res.json(result);
+        handler.command(req.params.gameid, playerid, req.body, render_json_response(req, res));
     });
 
 
     app.post('/players/register', function(req, res) {
-        var result = handler.register_player(req.body.id, req.body);
-        res.json(result);
+        handler.register_player(req.body.id, req.body, render_json_response(req, res));
     });
 
     app.get('/players/:playerid', function(req, res) {
-        var result = handler.read_player(req.params.playerid, req.body);
-        res.json(result);
+        handler.read_player(req.params.playerid, render_json_response(req, res));
     });
 
 };

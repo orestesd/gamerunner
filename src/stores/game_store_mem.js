@@ -5,19 +5,22 @@ var GameStore = function() {
     var games = {};
 
     return {
-        read : function(id) {
+        read : function(id, callback) {
             var data = games[id];
             if (data) {
                 var game = GameRunner.from_json(data);
                 process.emit('engine-instance-restored', game);
-                return game;
+
+                return callback ? callback(null, game) : game;
             }
         }, 
-        save : function(game) {
+        save : function(game, callback) {
             games[game.get_id()] = game.to_json();
+            return callback ? callback(null, game) : game;
         }, 
-        clear : function(game) {
+        clear : function(game, callback) {
             games = {};
+            return callback ? callback(null, game) : game;
         }
     };
 };
