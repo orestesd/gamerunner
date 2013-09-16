@@ -166,6 +166,17 @@ describe("[HTTP API]", function() {
                 });
                 
         });
+
+        it("GET /games/:game_id/timestamp -> get game timestamp", function(done) {
+            request(app)
+                .get(util.format('/games/%s/timestamp', game_id))
+                .set('authorization', auth_header('a'))
+                .end(function(err, res) {
+                    expect(res.body.timestamp).to.be.equal(0);
+                    done();
+                });
+                
+        });
     });
 
 });

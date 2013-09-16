@@ -131,6 +131,12 @@ var GameHandler = function(config) {
             return callback ? callback(null, status) : status;
         },
 
+        timestamp : function(game_id, callback) {
+            var runner = GameStore.read(game_id);
+            var timestamp = {'timestamp' : runner.get_timestamp()};
+            return callback ? callback(null, timestamp) : timestamp;
+        },
+
         command : function(game_id, player_id, command, callback) {
             var runner = GameStore.read(game_id);
 

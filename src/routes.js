@@ -88,6 +88,10 @@ module.exports = function(app, handler) {
         handler.status(req.params.gameid, render_json_response(req, res));
     });
 
+    app.all('/games/:gameid/timestamp', auth_user, auth_game, function(req, res) {
+        handler.timestamp(req.params.gameid, render_json_response(req, res));
+    });
+
     app.post('/games/:gameid/command', auth_user, auth_game, function(req, res) {
         var playerid = req.username;
         handler.command(req.params.gameid, playerid, req.body, render_json_response(req, res));
